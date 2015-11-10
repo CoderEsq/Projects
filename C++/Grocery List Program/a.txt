@@ -1,0 +1,4 @@
+Apples|bushel|3 3
+Oranges|bag|3 3
+Chips|carton|3 3
+M&M's|lbs|2 3
