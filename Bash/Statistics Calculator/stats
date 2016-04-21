@@ -1,0 +1,178 @@
+#!/bin/bash
+
+#****************************************************************************************
+#   Author:                       Alex Samuel
+#   Date Created:                 10/9/2015
+#   Last Modification Date:       10/17/2015
+#   Filename:                     stats
+#
+#   Overview:   This program calculates the median and average of an input file
+#               of numbers.
+#
+#   Input:  The input shall consist of command line arguments as well as
+#           an input file.
+#
+#   Output: The output of the program will be a display of the average and median
+#           values for columns or rows.
+#***************************************************************************************/
+
+#Trap design influenced by discussion on http://redsymbol.net/articles/bash-exit-traps/
+trap finish1 HUP INT KILL TERM
+trap finish0 EXIT
+
+#Sets exit status to 1 if error signal
+function finish1 {
+  exit 1
+}
+
+#Removes temp files upon EXIT signal
+function finish0 {
+  rm -f temp* sortedArr*
+}
+
+#Calculates Average and Median values for rows in input
+function row_stats {
+  #Creates array from temp file
+  readarray myarr < tempR$$ 
+  echo "Average Median"
+
+  for i in "${myarr[@]}"; do
+    #Takes every row and in array and replaces newlines with tabs, then sorts by value.
+    sorted=$(echo "$i" | tr "\t" "\n" | sort -n)
+    #Stores array variable in temp file.
+    echo "$sorted" > sortedArr$$
+    #Deletes first line of file
+    sed -i '1,1d' sortedArr$$
+    readarray sortarr < sortedArr$$
+    sum=0
+    k=0
+    #Calculates the number of values in the row
+    numVal=${#sortarr[@]}
+    #Since row is now sorted, this calculates the position of the median value
+    medPos=$(((numVal/2)+1))
+    avg=0
+    #Obtains the median value located at the median position
+    median=${sortarr[$(($medPos-1))]}
+
+    #Sums values within row 
+    for k in "${sortarr[@]}"; do
+      sum=$(($sum + $k))
+    done
+
+    #Calculates the average of the values within the row
+    avg=$((($sum + $numVal/2)/$numVal))
+    #Strips off trailing newline character from median variables
+    median=$(echo "$median" | tr "\n" ' ')
+    #Prints average and median values to the screen
+    echo -e "$avg\t$median"
+  done
+
+  exit 0
+}
+
+#Calculates Average and Median values for columns in input
+function col_stats {
+  #This calculates the number of columns by counting the number of
+  #words in the top row.
+  numCol=$(head -n 1 tempC$$ | wc -w)
+  #This calculates the number of rows by counting the number of
+  #lines in the file.
+  numRows=$(cat tempC$$ | wc -l)
+  medPos=$(((numRows/2)+1))
+
+  for ((i=1; i<=$numCol; i++)); do
+    #This splices the columns into a temporary file
+    cut -f$i tempC$$ > tempF$$
+    #Sorts temporary file
+    sort -n -o tempF$$ tempF$$
+    #Assigns median value from median position within sorted file
+    median=$(sed "$medPos"'q;d' tempF$$)
+    echo "$median" >> tempM$$
+    sum=0
+
+    #Extracts each value from each row in temp file and adds it to sum
+    for ((k=1; k<=$numRows; k++)); do
+      value=$(sed "$k"'q;d' tempF$$)
+      sum=$((sum+value))
+    done
+
+    avg=$((($sum + $numRows/2)/$numRows))
+    echo "$avg" >> tempA$$
+  done
+
+  echo "Averages:"
+
+  #Checks if average temp files exist, then replaces newlines with tabs
+  if [[ -r tempA$$ && -f tempA$$ ]]; then
+    cat tempA$$ | tr "\n" "\t" > tempB$$
+
+    if [[ -r tempB$$ && -f tempB$$ ]]; then
+      cat tempB$$
+    fi
+  fi
+  echo -e "\nMedians:"
+
+  #Checks if median temp files exist, then replaces newlines with tabs
+  if [[ -r tempM$$ && -f tempM$$ ]]; then
+    cat tempM$$ | tr "\n" "\t" > tempC$$
+    if [[ -r tempC$$ && -f tempC$$ ]]; then
+      #Adds newline to end of file. Based on design from
+      #http://unix.stackexchange.com/questions/31947/how-to-add-a-newline-to-the-end-of-a-file
+      sed -i -e '$a\' tempC$$
+      cat tempC$$
+    fi
+  fi
+
+  exit 0
+}
+
+#Checks if number of arguments is valid. Will trigger an error message
+#if number of command line arguments are less than 1 or >= 3.
+if [[ -z $1 ]] || [[ -n $3 ]]; then
+  echo "Usage: stats {-rows|-cols} [file]" 1>&2
+  exit 1
+fi
+
+#Checks if input is from piping. Design influenced from
+#http://posts.minhazulhaque.com/linux/bash-check-if-script-is-running-through.html
+# and http://stackoverflow.com/questions/212965/how-to-read-mutliline-input-from-stdin-into-variable-and-how-to-print-one-out-in
+if read -t 0; then
+  data=`cat`
+
+#These nested IF statements check if the user is using the 
+#proper syntax when selecting either rows or columns to calculate statistics.
+  if [[ "$1" != "-r"* ]]; then
+    if [[ "$1" != "-c"* ]]; then
+      echo "Usage: cat [file] | stats {-rows|-cols}" 1>&2
+      exit 1
+    else
+      #If syntax is good and user wants column stats, col_stats function is executed
+      echo "$data" > tempC$$
+      col_stats
+    fi
+  else
+    #If syntax is good and user wants row stats, row_stats function is executed
+    echo "$data" > tempR$$
+    row_stats
+  fi
+#Checks if $2 (file) is readable, exists, and is a file.
+elif [[ -z $2 ]]; then
+  echo "Usage: stats {-rows|-cols} [file]" 1>&2
+  exit 1
+elif [[ ! -r $2 ]] || [[ ! -f $2 ]]; then
+  echo "stats: cannot read "$2 1>&2
+  exit 1
+elif [[ "$1" != "-r"* ]]; then
+  if [[ "$1" != "-c"* ]]; then
+    echo "Usage: stats {-rows|-cols} [file]" 1>&2
+    exit 1
+  else
+  #If syntax is good and user wants column stats, col_stats function is executed
+    cat "$2" > tempC$$
+    col_stats
+  fi
+else
+#If syntax is good and user wants row stats, row_stats function is executed
+  cat "$2" > tempR$$
+  row_stats
+fi

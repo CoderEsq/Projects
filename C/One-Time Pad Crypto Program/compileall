@@ -1,0 +1,20 @@
+#!/bin/bash
+
+#****************************************************************************************
+#   Author:                       Alex Samuel
+#   Date Created:                 12/5/2015
+#   Last Modification Date:       12/6/2015
+#   Filename:                     compileall
+#
+#   Overview:   This program compiles several c programs identified below.
+#
+#   Input:  NONE
+#
+#   Output: The output of the program will be the 5 executable programs listed below.
+#***************************************************************************************/
+
+gcc -o keygen keygen.c 
+gcc -o otp_enc otp_enc.c
+gcc -o otp_enc_d otp_enc_d.c
+gcc -o otp_dec otp_dec.c
+gcc -o otp_dec_d otp_dec_d.c
