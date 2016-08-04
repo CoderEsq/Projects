@@ -1,7 +1,7 @@
 /****************************************************************************************
 *   Author:                       Alex Samuel
 *   Date Created:                 12/26/2015
-*   Last Modification Date:       3/19/2016
+*   Last Modification Date:       7/22/2016
 *   Filename:                     dekryptos.cpp
 *
 *   Overview:   This program will attempt to solve the 4th panel of the Kryptos sculpture.
@@ -37,6 +37,7 @@ using std::find_if;
 void dictionaryProg();
 void nVig();
 void kVig();
+void scytale();
 
 int main()
 {
@@ -49,7 +50,8 @@ int main()
              << "   1:     Dictionary Attack" << endl
              << "   2:     Normal Vigenere" << endl
              << "   3:     Kryptos Vigenere" << endl
-             << "   4:     EXIT TERMINAL" << endl << endl;
+             << "   4:     Scytale Method" << endl
+             << "   5:     EXIT TERMINAL" << endl << endl;
 
 
 
@@ -72,7 +74,11 @@ int main()
                  kVig();
                  break;
 
-             case 4:            //exits program
+             case 4:
+                 scytale();
+                 break;
+
+             case 5:            //exits program
                  exit(1);
                  break;
              }
@@ -106,8 +112,8 @@ void dictionaryProg()
     if(outputFile1) {
             cout << filename2 << " has been opened successfully." << endl;}
     else{
-            cout << "Can't open input file, " << filename2 << endl;
-            }
+            cout << "Can't open output file, " << filename2 << endl;
+        }
 
     if(outputFile2) {
             cout << filename3 << " has been opened successfully." << endl << endl;}
@@ -350,4 +356,98 @@ void kVig()
         cout << endl;
 
     }
+}
+
+void scytale()
+{
+    string filename = "skipSolution.txt";
+    ofstream outputFile1(filename);
+
+    if(outputFile1) {
+            cout << filename << " has been opened successfully." << endl;
+    }
+    else{
+            cout << "Can't open output file, " << filename << endl;
+    }
+
+    int attempt = 0;
+    int offset = 0;
+    int startIndex = 0;
+    int msgLength = 0;
+    int success = 0;
+
+    //Kryptos Panels 1-4
+    string part1 = "EMUFPHZLRFAXYUSDJKZLDKRNSHGNFIVJYQTQUXQBQVYUVLLTREVJYQTMKYRDMFD";
+    string part2 = "VFPJUDEEHZWETZYVGWHKKQETGFQJNCEGGWHKKDQMCPFQZDQMMIAGPFXHQRLGTIMVMZJANQLVKQEDAGDVFRPJUNGEUNAQZGZLECGYUXUEENJTBJLBQCRTBJDFHRRYIZETKZEMVDUFKSJHKFWHKUWQLSZFTIHHDDDUVHDWKBFUFPWNTDFIYCUQZEREEVLDKFEZMOQQJLTTUGSYQPFEUNLAVIDXFLGGTEZFKZBSFDQVGOGIPUFXHHDRKFFHQNTGPUAECNUVPDJMQCLQUMUNEDFQELZZVRRGKFFVOEEXBDMVPNFQXEZLGREDNQFMPNZGLFLPMRJQYALMGNUVPDXVKPDQUMEBEDMHDAFMJGZNUPLGEWJLLAETG";
+    string part3 = "ENDYAHROHNLSRHEOCPTEOIBIDYSHNAIACHTNREYULDSLLSLLNOHSNOSMRWXMNETPRNGATIHNRARPESLNNELEBLPIIACAEWMTWNDITEENRAHCTENEUDRETNHAEOETFOLSEDTIWENHAEIOYTEYQHEENCTAYCREIFTBRSPAMHHEWENATAMATEGYEERLBTEEFOASFIOTUETUAEOTOARMAEERTNRTIBSEDDNIAAHTTMSTEWPIEROAGRIEWFEBAECTDDHILCEIHSITEGOEAOSDDRYDLORITRKLMLEHAGTDHARDPNEOHMGFMFEUHEECDMRIPFEIMEHNLSSTTRTVDOHW?";
+    string part4 = "?OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR";
+
+    string test = "ABCDEFGHI";
+
+
+    string encMsg = part4;
+    string key = "BERLINCLOCK";
+    int maxStartIndex = 100000;
+    int maxOffset = 100000;
+
+    msgLength = encMsg.length();
+
+    //msgLength = 1;
+
+    //cout << "length of string is: " << msgLength << endl;
+
+    //cout << encMsg << endl << endl;
+
+
+
+        for (startIndex = 0; startIndex < msgLength; startIndex++) {
+
+            for (offset = 1; offset < msgLength; offset++) {
+                string decMsg;
+                int location = 0;
+
+                //cout << location << endl;
+                //cout << startIndex << endl << offset << endl;
+
+                    for (int ii = 0; ii < msgLength; ii++) {
+
+                        if(ii == 0) {
+                                location = startIndex % msgLength;
+                        }
+
+                        decMsg.push_back(encMsg.at(location));
+                        location = (location + offset) % msgLength;
+                    }
+
+                //cout << decMsg << endl;
+
+                std::size_t found = decMsg.find(key);
+
+                if (found != std::string::npos) {
+
+                    cout << "POTENTIAL SOLUTION FOUND" << endl;
+                    success++;
+
+                    outputFile1 << decMsg << endl;
+                    outputFile1 << "Start Index = " << startIndex << endl;
+                    outputFile1 << "Offset = " << offset << endl << endl;
+                }
+                else if (attempt % 1000000 == 0 && attempt > 1) {
+                    cout << attempt << endl;
+                }
+                else if (attempt % 10000000 == 0 && attempt > 1) {
+                    outputFile1 << "Start Index = " << startIndex << endl;
+                    outputFile1 << "Offset = " << offset << endl << endl;
+                }
+                attempt++;
+
+            }
+
+    }
+
+    if (success < 1) {
+        cout << "NO SOLUTIONS FOUND" << endl;
+    }
+
+    outputFile1.close();
 }
