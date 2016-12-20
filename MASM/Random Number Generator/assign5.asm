@@ -4,7 +4,7 @@ TITLE Random Number Generator (assign5.asm)
 ; Email:				samuelal@onid.oregonstate.edu 
 ; Date Created:			5/16/2015
 ; Date Modified:		5/19/2015
-; Course:				CS 271-400
+; Course:				Computer Architecture & Assembly
 ; Assignment:			Assignment 5
 ; Assignment Due Date:	5/24/2015
 ; Description:			Random number generator program which accepts an integer (n) and calculates

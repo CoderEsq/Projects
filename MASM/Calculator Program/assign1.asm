@@ -4,7 +4,7 @@ TITLE Calculator Program (assign1.asm)
 ; Email:				samuelal@onid.oregonstate.edu 
 ; Date Created:			4/3/2015
 ; Date Modified:		4/5/2015
-; Course:				CS 271-400
+; Course:				Computer Architecture & Assembly
 ; Assignment:			Assignment 1
 ; Assignment Due Date:	4/12/2015
 ; Description:			Calculator program which accepts two values and calculates

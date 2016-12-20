@@ -4,7 +4,7 @@ TITLE Low-Level I/O Calculator (assign6.asm)
 ; Email:				samuelal@onid.oregonstate.edu 
 ; Date Created:			5/26/2015
 ; Date Modified:		6/6/2015
-; Course:				CS 271-400
+; Course:				Computer Architecture & Assembly
 ; Assignment:			Assignment 6 Option A
 ; Assignment Due Date:	6/7/2015
 ; Description:			Low-Level I/O Calculator

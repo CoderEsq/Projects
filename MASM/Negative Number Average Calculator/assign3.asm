@@ -4,7 +4,7 @@ TITLE Negative Average Calculator Program (assign3.asm)
 ; Email:				samuelal@onid.oregonstate.edu 
 ; Date Created:			4/28/2015
 ; Date Modified:		5/3/2015
-; Course:				CS 271-400
+; Course:				Computer Architecture & Assembly
 ; Assignment:			Assignment 3
 ; Assignment Due Date:	5/3/2015
 ; Description:			Calculates the average value of a series of negative

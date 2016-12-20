@@ -4,7 +4,7 @@ TITLE Composite Number Calculator Program (assign4.asm)
 ; Email:				samuelal@onid.oregonstate.edu 
 ; Date Created:			5/11/2015
 ; Date Modified:		5/11/2015
-; Course:				CS 271-400
+; Course:				Computer Architecture & Assembly
 ; Assignment:			Assignment 4
 ; Assignment Due Date:	5/10/2015
 ; Description:			Composite number program which accepts an integer (n) and calculates

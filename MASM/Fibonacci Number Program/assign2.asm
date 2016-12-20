@@ -4,7 +4,7 @@ TITLE Fibonacci Number Program (assign2.asm)
 ; Email:				samuelal@onid.oregonstate.edu 
 ; Date Created:			4/13/2015
 ; Date Modified:		4/18/2015
-; Course:				CS 271-400
+; Course:				Computer Architecture & Assembly
 ; Assignment:			Assignment 2
 ; Assignment Due Date:	4/19/2015
 ; Description:			Fibonacci number program which accepts an integer (n) and calculates
