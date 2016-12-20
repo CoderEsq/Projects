@@ -81,9 +81,6 @@ int main(int argc, char *argv[]) {
     strncpy(handleNotat, handle, sizeof(handleNotat));
 
     int numRead;
-    /*
-	int numWrite;
-	*/
     int sockfd;
 	int portno;
     struct sockaddr_in serv_addr;
